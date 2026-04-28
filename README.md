@@ -76,7 +76,7 @@ The live dashboard refreshes every 3 seconds and shows:
 
 1. Install Docker and Docker Compose plugin.
 2. Clone this repository.
-3. Create a local `.env` file and set your Slack webhook there.
+3. Create a local `.env` file and set your Slack webhook and dashboard subdomain there.
 
 ```bash
 cp .env.example .env
@@ -86,6 +86,7 @@ Then edit `.env`:
 
 ```env
 SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
+DASHBOARD_DOMAIN=metrics.yourdomain.com
 ```
 
 4. Start the stack:
@@ -103,7 +104,7 @@ docker compose logs -f detector
 
 6. Verify:
    - Nextcloud is reachable on the server IP through Nginx.
-   - The dashboard is reachable on `http://SERVER_IP:8081` or your mapped domain/subdomain.
+   - The dashboard is reachable on `http://metrics.yourdomain.com`.
    - The detector is writing `detector/audit.log`.
 
 ## Required Submission Artifacts

@@ -62,12 +62,13 @@ def flush_second(
         error_baselines["ip_rates"][ip].add_second(second_ts, count)
 
     for ip, count in second_ip_errors.items():
-        error_baselines["ip_errors"][ip].add_second(second_ts, count)
+        total = second_ip_counts.get(ip, 0)
+        error_ratio = (count / total) if total else 0.0
+        error_baselines["ip_errors"][ip].add_second(second_ts, error_ratio)
 
-    error_baselines["global_errors"].add_second(
-        second_ts,
-        sum(second_ip_errors.values()),
-    )
+    global_error_total = sum(second_ip_errors.values())
+    global_error_ratio = (global_error_total / second_total) if second_total else 0.0
+    error_baselines["global_errors"].add_second(second_ts, global_error_ratio)
 
 
 def process_event(
@@ -142,8 +143,9 @@ def process_event(
     ip_rate = len(ip_window) / 60.0
     ip_stats = runtime["error_baselines"]["ip_rates"][ip].effective_stats(event_ts)
     error_stats = runtime["error_baselines"]["ip_errors"][ip].effective_stats(event_ts)
-    error_rate = len(runtime["ip_error_windows"][ip]) / 60.0
-    error_surge = detection_engine.error_surge(error_rate, error_stats)
+    error_count = len(runtime["ip_error_windows"][ip])
+    error_ratio = (error_count / len(ip_window)) if ip_window else 0.0
+    error_surge = detection_engine.error_surge(error_ratio, error_stats)
     ip_result = detection_engine.evaluate_ip(ip_rate, ip_stats, error_surge)
 
     if ip_result["fired"]:
@@ -265,9 +267,23 @@ def main():
         "last_baseline_recalc": None,
         "global_baseline": RollingBaseline(config["baseline"]),
         "error_baselines": {
-            "global_errors": RollingBaseline(config["baseline"]),
+            "global_errors": RollingBaseline(
+                {
+                    **config["baseline"],
+                    "minimum_mean": config["baseline"]["minimum_error_ratio_mean"],
+                    "minimum_stddev": config["baseline"]["minimum_error_ratio_stddev"],
+                }
+            ),
             "ip_rates": defaultdict(lambda: RollingBaseline(config["baseline"])),
-            "ip_errors": defaultdict(lambda: RollingBaseline(config["baseline"])),
+            "ip_errors": defaultdict(
+                lambda: RollingBaseline(
+                    {
+                        **config["baseline"],
+                        "minimum_mean": config["baseline"]["minimum_error_ratio_mean"],
+                        "minimum_stddev": config["baseline"]["minimum_error_ratio_stddev"],
+                    }
+                )
+            ),
         },
     }
 
@@ -323,7 +339,7 @@ def main():
                 unbanned["condition"],
                 unbanned["last_rate"],
                 unbanned["baseline_mean"],
-                "released",
+                unbanned["duration_label"],
             )
             dashboard_state.update_runtime(active_bans=ban_manager.snapshot())
 

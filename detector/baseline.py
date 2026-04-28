@@ -16,7 +16,8 @@ class RollingBaseline:
 
     def add_second(self, timestamp, count):
         second = int(timestamp)
-        hour_key = datetime.utcfromtimestamp(second).strftime("%H")
+        # Keep a true hour bucket so samples from different dates do not mix.
+        hour_key = datetime.utcfromtimestamp(second).strftime("%Y-%m-%d-%H")
         self.window.append(count)
         self.hour_slots[hour_key].append(count)
 
@@ -24,7 +25,9 @@ class RollingBaseline:
         if timestamp is None:
             timestamp = time.time()
 
-        hour_key = datetime.utcfromtimestamp(int(timestamp)).strftime("%H")
+        # Prefer the active hour once it has enough samples, otherwise fall back
+        # to the rolling 30-minute window of per-second counts.
+        hour_key = datetime.utcfromtimestamp(int(timestamp)).strftime("%Y-%m-%d-%H")
         current_hour = self.hour_slots[hour_key]
         if len(current_hour) >= self.hour_slot_min_samples:
             stats = self._stats(current_hour)

@@ -11,6 +11,8 @@ baseline:
   hour_slot_min_samples: 300
   minimum_mean: 1.0
   minimum_stddev: 0.5
+  minimum_error_ratio_mean: 0.001
+  minimum_error_ratio_stddev: 0.001
 
 thresholds:
   ip_zscore: 3.0
@@ -23,7 +25,7 @@ thresholds:
 
 blocking:
   enabled: true
-  chain: INPUT
+  chain: DOCKER-USER
   durations_minutes:
     - 10
     - 30
@@ -33,5 +35,5 @@ slack:
   webhook_url: ""
 
 dashboard:
-  host: 0.0.0.0
+  host: 127.0.0.1
   port: 8081

@@ -16,6 +16,8 @@ class DetectionEngine:
         )
 
     def evaluate_ip(self, current_rate, baseline, error_surge=False):
+        # Tighten the per-IP thresholds whenever the current error ratio is
+        # materially above that IP's learned baseline error ratio.
         zscore_threshold = self.tightened_zscore if error_surge else self.ip_zscore
         spike_multiplier = (
             self.tightened_multiplier if error_surge else self.spike_multiplier
@@ -30,11 +32,13 @@ class DetectionEngine:
             result["condition"] = f"{result['condition']} + error surge"
         return result
 
-    def error_surge(self, current_error_rate, baseline):
-        baseline_mean = max(baseline["mean"], 0.01)
-        return current_error_rate >= baseline_mean * self.error_multiplier
+    def error_surge(self, current_error_ratio, baseline):
+        baseline_mean = max(baseline["mean"], 0.001)
+        return current_error_ratio >= baseline_mean * self.error_multiplier
 
     def _evaluate(self, current_rate, baseline, zscore_threshold, spike_multiplier):
+        # A request rate is anomalous as soon as either threshold fires:
+        # z-score over baseline or a simple mean-multiplier spike.
         baseline_mean = max(baseline["mean"], 0.01)
         baseline_stddev = max(baseline["stddev"], 0.01)
         zscore = (current_rate - baseline_mean) / baseline_stddev

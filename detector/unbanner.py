@@ -33,6 +33,7 @@ class BanManager:
                 "banned_at": timestamp,
                 "expires_at": expires_at,
                 "duration_label": duration_label,
+                "duration_minutes": duration_minutes,
                 "last_rate": current_rate,
                 "baseline_mean": baseline["mean"],
             }
