@@ -1,0 +1,37 @@
+app:
+  log_level: INFO
+
+paths:
+  access_log: /var/log/nginx/hng-access.log
+  audit_log: ./audit.log
+
+baseline:
+  window_seconds: 1800
+  recalculation_interval_seconds: 60
+  hour_slot_min_samples: 300
+  minimum_mean: 1.0
+  minimum_stddev: 0.5
+
+thresholds:
+  ip_zscore: 3.0
+  global_zscore: 3.0
+  spike_multiplier: 5.0
+  error_rate_multiplier: 3.0
+  tightened_ip_zscore: 2.0
+  tightened_spike_multiplier: 3.0
+  global_alert_cooldown_seconds: 60
+
+blocking:
+  enabled: true
+  chain: INPUT
+  durations_minutes:
+    - 10
+    - 30
+    - 120
+
+slack:
+  webhook_url: ""
+
+dashboard:
+  host: 0.0.0.0
+  port: 8081

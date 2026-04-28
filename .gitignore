@@ -1,0 +1,6 @@
+detector/__pycache__/
+detector/audit.log
+*.pyc
+.env
+detector/.env
+.codex/
