@@ -4,9 +4,9 @@ This project deploys the provided `kefaslungu/hng-nextcloud` image behind Nginx 
 
 ## Live Submission Fields
 
-- Server IP: `YOUR_SERVER_IP`
-- Metrics dashboard URL: `http://YOUR_DOMAIN_OR_SUBDOMAIN:8081`
-- Public GitHub repo: `YOUR_PUBLIC_REPO_URL`
+- Server IP: `http://13.49.138.67`
+- Metrics dashboard URL: `http://hngstage3metrics.duckdns.org/`
+- Public GitHub repo: `https://github.com/MerlinTheWhiz/hng-stage3`
 - Blog post: `YOUR_BLOG_POST_URL`
 
 ## Why Python
