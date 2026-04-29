@@ -7,7 +7,7 @@ This project deploys the provided `kefaslungu/hng-nextcloud` image behind Nginx 
 - Server IP: `http://13.49.138.67`
 - Metrics dashboard URL: `http://hngstage3metrics.duckdns.org/`
 - Public GitHub repo: `https://github.com/MerlinTheWhiz/hng-stage3`
-- Blog post: `YOUR_BLOG_POST_URL`
+- Blog post: `https://medium.com/@michaelnathan505/building-a-real-time-anomaly-detection-engine-for-ddos-protection-aef07a37a2f1`
 
 ## Why Python
 
