@@ -9,6 +9,7 @@ services:
     image: nginx:latest
     ports:
       - "80:80"
+      - "443:443"
     environment:
       DASHBOARD_DOMAIN: ${DASHBOARD_DOMAIN:-metrics.example.com}
     extra_hosts:
@@ -16,6 +17,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/templates/default.conf.template:ro
       - HNG-nginx-logs:/var/log/nginx
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - nextcloud
 
